@@ -9,20 +9,14 @@ window.APP_CONFIG = {
     "重度のアレルギーをお持ちのお客様は、必ずスタッフまでお申し出ください。"
   ],
 
-  // 運用方法は次の2択です。
-  // 1. Googleスプレッドシートを使う: googleSheet を設定
-  // 2. ローカルCSVを使う: dataSource を設定
-  //
-  // Googleスプレッドシート運用の例:
-  // - シートを「リンクを知っている全員が閲覧可」にする
-  // - URLの /d/ と /edit の間にある文字列が sheetId
-  // - gid はシートURL末尾の gid=... の数字です
+  // 公開ページはローカルCSVだけを読みます。
+  // Googleスプレッドシートとの同期は GitHub Actions 側で行います。
   googleSheet: {
-    enabled: true,
-    sheetId: "1HhvwiexhZaeKFmyk-AFm_sEHEfJ0MifYJaDSRCdME-w",
+    enabled: false,
+    sheetId: "",
     gid: "0"
   },
 
-  // Googleスプレッドシートを使わない場合の予備データ
+  // 公開ページが直接読むCSV
   dataSource: "./data/allergy.csv"
 };
