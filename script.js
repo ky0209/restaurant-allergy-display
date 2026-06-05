@@ -1,5 +1,5 @@
 const config = window.APP_CONFIG || {};
-const DATA_SOURCE = config.dataSource || "./data/allergy.csv";
+const DATA_SOURCE = resolveDataSource();
 
 const ALLERGEN_LABELS = {
   egg: "卵",
@@ -65,6 +65,19 @@ const elements = {
 };
 
 document.addEventListener("DOMContentLoaded", init);
+
+function resolveDataSource() {
+  const googleSheet = config.googleSheet || {};
+
+  if (googleSheet.enabled && googleSheet.sheetId) {
+    const gid = googleSheet.gid || "0";
+
+    // Googleスプレッドシートを公開CSVとして読むURLを組み立てます。
+    return `https://docs.google.com/spreadsheets/d/${googleSheet.sheetId}/export?format=csv&gid=${gid}`;
+  }
+
+  return config.dataSource || "./data/allergy.csv";
+}
 
 async function init() {
   applyConfig();

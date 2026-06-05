@@ -3,13 +3,15 @@
 店頭 POP の QR コードから開ける、静的なアレルギー表示ページです。  
 GitHub Pages にそのまま置けるように、`HTML / CSS / JavaScript / CSV` だけで動く構成にしています。
 
+現在のおすすめ運用は、`Googleスプレッドシートを更新するだけ` の方法です。  
+GitHub を毎回触らなくても、公開中のページ内容を更新できます。
+
 ## できること
 
 - 商品一覧の表示
 - 商品名、カテゴリ、備考、含まれるアレルゲン名での検索
 - カテゴリ絞り込み
 - アレルゲン絞り込み
-- 並び替え
 - 最終更新日の表示
 - CSV の不備があるときの警告表示
 
@@ -47,16 +49,82 @@ GitHub Pages にそのまま置けるように、`HTML / CSS / JavaScript / CSV`
 https://<githubユーザー名>.github.io/<repository-name>/
 ```
 
+## いちばん簡単な更新方法
+
+1. Googleスプレッドシートを 1 つ作ります。
+2. `sample/allergy_sample.csv` の内容をそのまま貼り付けます。
+3. スプレッドシートの共有設定を `リンクを知っている全員が閲覧可` にします。
+4. スプレッドシートの URL から `sheetId` と `gid` を確認します。
+5. `config.js` の `googleSheet` を設定します。
+6. 以後はスプレッドシートを編集するだけで、公開ページの内容を更新できます。
+
+## config.js の設定例
+
+```js
+window.APP_CONFIG = {
+  storeName: "テスト食堂",
+  storeNameEn: "Test Shokudo",
+  pageTitle: "テスト食堂 アレルギー表示",
+  heroNote: "気になる点があれば、注文前にスタッフへご相談ください",
+  noticeLines: [
+    "このページは、お客様が商品選択時にアレルゲン情報を確認するためのものです。",
+    "調理環境では、他の商品と共通の器具・設備を使用している場合があります。",
+    "重度のアレルギーをお持ちのお客様は、必ずスタッフまでお申し出ください。"
+  ],
+  googleSheet: {
+    enabled: true,
+    sheetId: "1AbCdEfGhIjKlMnOpQrStUvWxYz1234567890",
+    gid: "0"
+  },
+  dataSource: "./data/allergy.csv"
+};
+```
+
+## sheetId と gid の見方
+
+スプレッドシート URL の例:
+
+```text
+https://docs.google.com/spreadsheets/d/1AbCdEfGhIjKlMnOpQrStUvWxYz1234567890/edit#gid=0
+```
+
+- `sheetId`
+
+```text
+1AbCdEfGhIjKlMnOpQrStUvWxYz1234567890
+```
+
+- `gid`
+
+```text
+0
+```
+
 ## 商品データの更新方法
 
-商品情報を更新したい場合は、`data/allergy.csv` を編集してください。  
-更新後に GitHub に反映すれば、公開ページの表示も更新されます。
+Googleスプレッドシート運用にしたあとは、商品情報を更新したいときに GitHub を触る必要はありません。  
+シートの内容を書き換えるだけで、公開ページの表示を更新できます。
 
-店で新しく CSV を作るときは、`sample/allergy_sample.csv` をコピーして使うと分かりやすいです。
+最初にシートを作るときは、`sample/allergy_sample.csv` をコピーして使うと分かりやすいです。
 
-店名、説明文、注意書きを変えたい場合は、`config.js` を編集してください。
+店名や注意書きを変えたい場合だけ、`config.js` を編集してください。
+
+## ローカルCSV運用に戻したい場合
+
+Googleスプレッドシートを使わず、リポジトリ内の CSV を読みたい場合は `config.js` を次のようにします。
+
+```js
+googleSheet: {
+  enabled: false,
+  sheetId: "",
+  gid: "0"
+},
+dataSource: "./data/allergy.csv"
+```
 
 ## CSV の書き方
+
+Googleスプレッドシートでも、列構成はこの CSV と同じです。
 
 ファイル名:
 
@@ -116,10 +184,10 @@ id,category,name,egg,milk,wheat,buckwheat,peanut,shrimp,crab,walnut,cashew,almon
 - 店名
 - 英語表記
 - ページタイトル
-- 説明文
 - 上部メモ
 - 注意書き
-- CSV の読み込み先
+- Googleスプレッドシートの `sheetId` / `gid`
+- ローカルCSVの読み込み先
 
 ## 更新時のポイント
 
@@ -131,11 +199,22 @@ id,category,name,egg,milk,wheat,buckwheat,peanut,shrimp,crab,walnut,cashew,almon
 
 ## よくあるトラブル
 
-### CSV を更新したのに画面が変わらない
+### Googleスプレッドシートを更新したのに画面が変わらない
 
-- GitHub にアップロードできているか確認してください。
-- GitHub Pages の反映に少し時間がかかることがあります。
+- スプレッドシートが `リンクを知っている全員が閲覧可` になっているか確認してください。
+- `config.js` の `sheetId` と `gid` が正しいか確認してください。
 - ブラウザを再読み込みしてください。
+- Google 側の反映に少し時間がかかることがあります。
+
+### 初回表示でエラーになる
+
+- `googleSheet.enabled` が `true` のとき、`sheetId` が空欄だと読み込めません。
+- スプレッドシート URL をそのまま `dataSource` に入れるのではなく、`googleSheet.sheetId` と `googleSheet.gid` を設定してください。
+
+### GitHub にある CSV を更新しても変わらない
+
+- `googleSheet.enabled` が `true` だと、ページは Googleスプレッドシートを優先して読み込みます。
+- GitHub 内の `data/allergy.csv` を使いたい場合は、`googleSheet.enabled` を `false` にしてください。
 
 ### ページにエラーが出る
 
@@ -152,4 +231,4 @@ id,category,name,egg,milk,wheat,buckwheat,peanut,shrimp,crab,walnut,cashew,almon
 
 - このサイトは静的ページです。
 - サーバー、データベース、ログイン機能は使っていません。
-- 相対パスで読み込む作りなので、GitHub Pages のリポジトリ配下でもそのまま動きます。
+- Googleスプレッドシート運用でも、表示側は GitHub Pages の静的サイトのままです。
