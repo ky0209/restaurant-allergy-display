@@ -55,6 +55,7 @@ const elements = {
   sortSelect: document.getElementById("sort-select"),
   allergenFilters: document.getElementById("allergen-filters"),
   resultCount: document.getElementById("result-count"),
+  activeFilterSummary: document.getElementById("active-filter-summary"),
   messageArea: document.getElementById("message-area"),
   productList: document.getElementById("product-list"),
   resetButton: document.getElementById("reset-button")
@@ -346,12 +347,14 @@ function render() {
 
   if (state.loadError) {
     elements.resultCount.textContent = "0件の商品を表示中";
+    elements.activeFilterSummary.replaceChildren();
     elements.productList.replaceChildren();
     return;
   }
 
   const filteredItems = applyFilters(state.items);
   elements.resultCount.textContent = `${filteredItems.length}件の商品を表示中`;
+  renderActiveFilterSummary();
   renderItems(filteredItems);
 }
 
@@ -384,6 +387,47 @@ function createMessageBox(text, type) {
   box.className = `status-box ${type}`;
   box.textContent = text;
   return box;
+}
+
+function renderActiveFilterSummary() {
+  const chips = [];
+
+  if (state.keyword.trim()) {
+    chips.push(`検索: ${state.keyword.trim()}`);
+  }
+
+  if (state.category !== "all") {
+    chips.push(`カテゴリ: ${state.category}`);
+  }
+
+  if (state.selectedAllergens.length > 0) {
+    const labels = state.selectedAllergens.map((key) => ALLERGEN_LABELS[key]).join("・");
+    const modeLabel = state.allergenMode === "excludes" ? "含まない" : "含む";
+    chips.push(`アレルゲン: ${labels} を${modeLabel}`);
+  }
+
+  if (state.sort !== "default") {
+    const sortLabel = state.sort === "category" ? "カテゴリ順" : "商品名順";
+    chips.push(`並び替え: ${sortLabel}`);
+  }
+
+  if (chips.length === 0) {
+    const defaultChip = document.createElement("span");
+    defaultChip.className = "summary-chip";
+    defaultChip.textContent = "現在は全商品を表示しています";
+    elements.activeFilterSummary.replaceChildren(defaultChip);
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+  chips.forEach((chipText) => {
+    const chip = document.createElement("span");
+    chip.className = "summary-chip";
+    chip.textContent = chipText;
+    fragment.appendChild(chip);
+  });
+
+  elements.activeFilterSummary.replaceChildren(fragment);
 }
 
 function applyFilters(items) {
@@ -478,21 +522,35 @@ function createProductCard(item) {
   const card = document.createElement("article");
   card.className = "product-card";
 
+  const header = document.createElement("div");
+  header.className = "product-header";
+
+  const titleBlock = document.createElement("div");
   const title = document.createElement("h3");
   title.textContent = item.name || "名称未設定";
-
   const meta = document.createElement("p");
   meta.className = "product-meta";
-  meta.textContent = `カテゴリ：${item.category || "未設定"}`;
+  meta.textContent = item.updated_at ? `更新日: ${item.updated_at}` : "更新日: -";
+  titleBlock.append(title, meta);
 
-  card.append(title, meta);
+  const categoryBadge = document.createElement("span");
+  categoryBadge.className = "category-badge";
+  categoryBadge.textContent = item.category || "未設定";
+
+  header.append(titleBlock, categoryBadge);
+  card.appendChild(header);
 
   const allergenSummary = collectAllergenSummary(item);
   card.appendChild(createTagSection("含まれるアレルゲン", allergenSummary.contains, "contains", "含む"));
   card.appendChild(createTagSection("確認が必要", allergenSummary.unknown, "unknown", "要確認"));
 
   if (allergenSummary.none.length > 0) {
-    card.appendChild(createTagSection("含まれない想定", allergenSummary.none, "none", "なし"));
+    const details = document.createElement("details");
+    details.className = "detail-toggle";
+    const summary = document.createElement("summary");
+    summary.textContent = "含まれない想定の項目を見る";
+    details.append(summary, createTagSection("含まれない想定", allergenSummary.none, "none", "なし"));
+    card.appendChild(details);
   }
 
   const noteSection = document.createElement("section");
@@ -504,11 +562,6 @@ function createProductCard(item) {
   noteText.textContent = item.note || "特記事項はありません。";
   noteSection.append(noteTitle, noteText);
   card.appendChild(noteSection);
-
-  const updated = document.createElement("p");
-  updated.className = "updated-text product-section";
-  updated.textContent = `更新日：${item.updated_at || "-"}`;
-  card.appendChild(updated);
 
   return card;
 }
