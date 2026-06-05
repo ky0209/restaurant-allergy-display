@@ -9,14 +9,6 @@ window.APP_CONFIG = {
     "重度のアレルギーをお持ちのお客様は、必ずスタッフまでお申し出ください。"
   ],
 
-  // 公開ページはローカルCSVだけを読みます。
-  // Googleスプレッドシートとの同期は GitHub Actions 側で行います。
-  googleSheet: {
-    enabled: false,
-    sheetId: "",
-    gid: "0"
-  },
-
   // 公開ページが直接読むCSV
   dataSource: "./data/allergy.csv"
 };
