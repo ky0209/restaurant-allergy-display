@@ -594,7 +594,9 @@ function createProductCard(item) {
 
   const allergenSummary = collectAllergenSummary(item);
   card.appendChild(createTagSection("含まれるアレルゲン", allergenSummary.contains, "contains", "含む"));
-  card.appendChild(createTagSection("確認が必要", allergenSummary.unknown, "unknown", "要確認"));
+  if (allergenSummary.unknown.length > 0) {
+    card.appendChild(createTagSection("確認が必要", allergenSummary.unknown, "unknown", "要確認"));
+  }
 
   if (allergenSummary.none.length > 0) {
     const details = document.createElement("details");
@@ -648,7 +650,7 @@ function createTagSection(titleText, labels, type, prefix) {
   if (labels.length === 0) {
     const empty = document.createElement("p");
     empty.className = "note-text";
-    empty.textContent = type === "none" ? "表示を省略しています。" : "該当する項目はありません。";
+    empty.textContent = type === "none" ? "表示を省略しています。" : "該当項目はありません。";
     section.appendChild(empty);
     return section;
   }
