@@ -245,6 +245,14 @@ function parseCsv(text) {
     throw new Error("CSV is empty");
   }
 
+  while (rows.length > 0 && rows[0].every((cell) => cell.trim() === "")) {
+    rows.shift();
+  }
+
+  if (rows.length === 0) {
+    throw new Error("CSV has no header row");
+  }
+
   const headers = rows.shift().map((header) => header.trim());
   return { headers, rows };
 }
