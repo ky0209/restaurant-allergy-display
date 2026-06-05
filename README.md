@@ -124,7 +124,8 @@ dataSource: "./data/allergy.csv"
 
 ## CSV の書き方
 
-Googleスプレッドシートでも、列構成はこの CSV と同じです。
+Googleスプレッドシートでは、日本語ヘッダーのまま使えます。  
+このページ側で `商品名 / 卵 / 乳 / 小麦` のような日本語列名を読み取れるようにしています。
 
 ファイル名:
 
@@ -139,11 +140,13 @@ UTF-8
 ```
 
 1 行目はヘッダー行です。  
-基本のカラムは次のとおりです。
+おすすめの日本語ヘッダーは次のとおりです。
 
 ```csv
-id,category,name,egg,milk,wheat,buckwheat,peanut,shrimp,crab,walnut,cashew,almond,abalone,squid,salmon_roe,orange,beef,kiwi,sesame,salmon,mackerel,soybean,chicken,banana,pork,matsutake,peach,yam,apple,gelatin,macadamia,pistachio,image,image_alt,note,updated_at
+商品ID,カテゴリ,商品名,卵,乳,小麦,そば,落花生,えび,かに,くるみ,カシューナッツ,アーモンド,あわび,いか,いくら,オレンジ,牛肉,キウイフルーツ,ごま,さけ,さば,大豆,鶏肉,バナナ,豚肉,まつたけ,もも,やまいも,りんご,ゼラチン,マカダミアナッツ,ピスタチオ,画像,画像説明,備考,更新日
 ```
+
+英語ヘッダーでも動きますが、運用しやすさの面では日本語ヘッダーがおすすめです。
 
 ## アレルゲン列で使える値
 
@@ -191,9 +194,9 @@ id,category,name,egg,milk,wheat,buckwheat,peanut,shrimp,crab,walnut,cashew,almon
 
 ## 更新時のポイント
 
-- `id` は商品ごとに重複しない値にしてください。
-- `name` は空欄にしないでください。
-- `updated_at` は `YYYY-MM-DD` 形式がおすすめです。
+- `商品ID` は商品ごとに重複しない値にしてください。
+- `商品名` は空欄にしないでください。
+- `更新日` は `YYYY-MM-DD` 形式がおすすめです。
 - `note` には、お客様に見せてよい内容だけを書いてください。
 - 原価、仕入先、社内メモ、レシピ詳細、個人情報は入れないでください。
 

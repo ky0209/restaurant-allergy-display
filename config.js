@@ -18,8 +18,8 @@ window.APP_CONFIG = {
   // - URLの /d/ と /edit の間にある文字列が sheetId
   // - gid はシートURL末尾の gid=... の数字です
   googleSheet: {
-    enabled: false,
-    sheetId: "",
+    enabled: true,
+    sheetId: "1HhvwiexhZaeKFmyk-AFm_sEHEfJ0MifYJaDSRCdME-w",
     gid: "0"
   },
 

@@ -34,6 +34,22 @@ const ALLERGEN_LABELS = {
   pistachio: "ピスタチオ"
 };
 
+const COLUMN_ALIASES = {
+  id: ["id", "ID", "商品ID"],
+  category: ["category", "カテゴリ"],
+  name: ["name", "商品名"],
+  note: ["note", "備考"],
+  updated_at: ["updated_at", "更新日", "最終更新日"],
+  image: ["image", "画像", "画像URL", "画像パス"],
+  image_alt: ["image_alt", "画像説明", "代替テキスト", "画像alt"],
+  image_fit: ["image_fit", "画像fit", "画像表示方法"],
+  image_position: ["image_position", "画像位置", "画像ポジション"]
+};
+
+Object.entries(ALLERGEN_LABELS).forEach(([key, label]) => {
+  COLUMN_ALIASES[key] = [key, label];
+});
+
 const REQUIRED_COLUMNS = ["id", "category", "name", "note", "updated_at"];
 const VALID_ALLERGEN_VALUES = new Set(["あり", "なし", "不明", ""]);
 const ALLERGEN_KEYS = Object.keys(ALLERGEN_LABELS);
@@ -233,11 +249,25 @@ function parseCsv(text) {
   return { headers, rows };
 }
 
+function resolveHeaderKey(header) {
+  const normalized = header.trim();
+
+  for (const [canonicalKey, aliases] of Object.entries(COLUMN_ALIASES)) {
+    if (aliases.includes(normalized)) {
+      return canonicalKey;
+    }
+  }
+
+  return normalized;
+}
+
 function normalizeItems(headers, rows) {
+  const resolvedHeaders = headers.map(resolveHeaderKey);
+
   return rows.map((row, index) => {
     const item = { _rowNumber: index + 2, _originalOrder: index, _columnCount: row.length };
 
-    headers.forEach((header, headerIndex) => {
+    resolvedHeaders.forEach((header, headerIndex) => {
       item[header] = (row[headerIndex] || "").trim();
     });
 
@@ -253,7 +283,7 @@ function normalizeItems(headers, rows) {
 
 function validateItems(headers, items) {
   const warnings = [];
-  const existingHeaders = new Set(headers);
+  const existingHeaders = new Set(headers.map(resolveHeaderKey));
   const missingRequired = REQUIRED_COLUMNS.filter((column) => !existingHeaders.has(column));
 
   if (missingRequired.length > 0) {
