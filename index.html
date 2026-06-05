@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>みなと食堂 アレルギー表示</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="page-header">
+      <p class="eyebrow">Minato Shokudo</p>
+      <h1>みなと食堂 アレルギー表示</h1>
+      <p class="page-description">商品ごとのアレルゲン情報を確認できます。</p>
+      <p id="last-updated" class="last-updated">最終更新日：-</p>
+    </header>
+
+    <main>
+      <section class="notice-card" aria-labelledby="notice-title">
+        <h2 id="notice-title">ご確認ください</h2>
+        <p>このページは、お客様が商品選択時にアレルゲン情報を確認するためのものです。</p>
+        <p>調理環境では、他の商品と共通の器具・設備を使用している場合があります。</p>
+        <p>重度のアレルギーをお持ちのお客様は、必ずスタッフまでお申し出ください。</p>
+      </section>
+
+      <section class="filter-card" aria-labelledby="filter-title">
+        <div class="section-heading">
+          <h2 id="filter-title">検索・絞り込み</h2>
+          <button id="reset-button" type="button" class="secondary-button">条件をリセット</button>
+        </div>
+
+        <form id="filter-form" class="filter-form" novalidate>
+          <div class="field-group">
+            <label for="search-input">キーワード検索</label>
+            <input
+              id="search-input"
+              name="search"
+              type="search"
+              inputmode="search"
+              placeholder="商品名・カテゴリ・備考で検索"
+              autocomplete="off"
+            >
+          </div>
+
+          <div class="field-group">
+            <label for="category-select">カテゴリ</label>
+            <select id="category-select" name="category">
+              <option value="all">すべて</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="sort-select">並び替え</label>
+            <select id="sort-select" name="sort">
+              <option value="default">デフォルト順</option>
+              <option value="category">カテゴリ順</option>
+              <option value="name">商品名順</option>
+            </select>
+          </div>
+
+          <fieldset class="field-group">
+            <legend>アレルゲン絞り込みモード</legend>
+            <div class="radio-group">
+              <label class="radio-pill" for="mode-contains">
+                <input id="mode-contains" type="radio" name="allergen-mode" value="contains" checked>
+                <span>含む商品を表示</span>
+              </label>
+              <label class="radio-pill" for="mode-excludes">
+                <input id="mode-excludes" type="radio" name="allergen-mode" value="excludes">
+                <span>含まない商品を表示</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="field-group">
+            <legend>アレルゲンを選択</legend>
+            <p class="field-help">複数選択時は AND 条件です。</p>
+            <div id="allergen-filters" class="allergen-grid" aria-live="polite"></div>
+          </fieldset>
+        </form>
+      </section>
+
+      <section class="result-section" aria-labelledby="result-title">
+        <div class="section-heading">
+          <h2 id="result-title">商品一覧</h2>
+          <p id="result-count" class="result-count">読み込み中...</p>
+        </div>
+        <div id="message-area" class="message-area" aria-live="polite"></div>
+        <div id="product-list" class="product-list"></div>
+      </section>
+    </main>
+
+    <footer class="page-footer">
+      <p>情報に不安がある場合はスタッフまでお声がけください。</p>
+    </footer>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+id,category,name,egg,milk,wheat,buckwheat,peanut,shrimp,crab,walnut,cashew,almond,abalone,squid,salmon_roe,orange,beef,kiwi,sesame,salmon,mackerel,soybean,chicken,banana,pork,matsutake,peach,yam,apple,gelatin,macadamia,pistachio,note,updated_at
+item_001,麺類,商品名を入力,あり,なし,あり,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,あり,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,補足があれば入力してください。,2026-06-05
+item_002,デザート,別の商品名,なし,あり,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,なし,あり,なし,なし,使っている原材料や注意点を記載します。,2026-06-05
