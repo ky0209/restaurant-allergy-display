@@ -44,7 +44,6 @@ const state = {
   category: "all",
   selectedAllergens: [],
   allergenMode: "contains",
-  sort: "default",
   warnings: [],
   loadError: ""
 };
@@ -52,13 +51,11 @@ const state = {
 const elements = {
   storeEyebrow: document.getElementById("store-eyebrow"),
   pageTitle: document.getElementById("page-title"),
-  pageDescription: document.getElementById("page-description"),
   heroNote: document.getElementById("hero-note"),
   noticeList: document.getElementById("notice-list"),
   lastUpdated: document.getElementById("last-updated"),
   searchInput: document.getElementById("search-input"),
   categoryChips: document.getElementById("category-chips"),
-  sortSelect: document.getElementById("sort-select"),
   allergenFilters: document.getElementById("allergen-filters"),
   resultCount: document.getElementById("result-count"),
   activeFilterSummary: document.getElementById("active-filter-summary"),
@@ -83,8 +80,6 @@ function applyConfig() {
   document.title = pageTitle;
   elements.storeEyebrow.textContent = config.storeNameEn || storeName;
   elements.pageTitle.textContent = pageTitle;
-  elements.pageDescription.textContent =
-    config.pageDescription || "商品ごとのアレルゲン情報を、店頭で見やすく確認できるページです。";
   elements.heroNote.textContent =
     config.heroNote || "迷ったときはスタッフへお声がけください";
 
@@ -108,11 +103,6 @@ function applyConfig() {
 function bindEvents() {
   elements.searchInput.addEventListener("input", (event) => {
     state.keyword = event.target.value;
-    render();
-  });
-
-  elements.sortSelect.addEventListener("change", (event) => {
-    state.sort = event.target.value;
     render();
   });
 
@@ -374,10 +364,8 @@ function resetFilters() {
   state.category = "all";
   state.selectedAllergens = [];
   state.allergenMode = "contains";
-  state.sort = "default";
 
   elements.searchInput.value = "";
-  elements.sortSelect.value = "default";
   document.getElementById("mode-contains").checked = true;
   document.getElementById("mode-excludes").checked = false;
   renderCategoryChips(state.items);
@@ -416,12 +404,6 @@ function renderMessages() {
     fragment.appendChild(createMessageBox(warningText, "warning"));
   }
 
-  if (!state.loadError && state.items.length > 0) {
-    fragment.appendChild(
-      createMessageBox("「含む」と「要確認」を中心に表示しています。詳細は各商品の備考もご確認ください。", "info")
-    );
-  }
-
   elements.messageArea.replaceChildren(fragment);
 }
 
@@ -449,16 +431,8 @@ function renderActiveFilterSummary() {
     chips.push(`アレルゲン: ${labels} を${modeLabel}`);
   }
 
-  if (state.sort !== "default") {
-    const sortLabel = state.sort === "category" ? "カテゴリ順" : "商品名順";
-    chips.push(`並び替え: ${sortLabel}`);
-  }
-
   if (chips.length === 0) {
-    const defaultChip = document.createElement("span");
-    defaultChip.className = "summary-chip";
-    defaultChip.textContent = "現在は全商品を表示しています";
-    elements.activeFilterSummary.replaceChildren(defaultChip);
+    elements.activeFilterSummary.replaceChildren();
     return;
   }
 
@@ -492,7 +466,7 @@ function applyFilters(items) {
     result = result.filter((item) => matchesAllergenFilter(item));
   }
 
-  return sortItems(result);
+  return result.sort((first, second) => first._originalOrder - second._originalOrder);
 }
 
 function buildSearchText(item) {
@@ -525,24 +499,6 @@ function normalizeAllergenValue(value) {
   return "不明";
 }
 
-function sortItems(items) {
-  if (state.sort === "category") {
-    return [...items].sort((first, second) => {
-      const categoryResult = first.category.localeCompare(second.category, "ja");
-      if (categoryResult !== 0) {
-        return categoryResult;
-      }
-      return first.name.localeCompare(second.name, "ja");
-    });
-  }
-
-  if (state.sort === "name") {
-    return [...items].sort((first, second) => first.name.localeCompare(second.name, "ja"));
-  }
-
-  return [...items].sort((first, second) => first._originalOrder - second._originalOrder);
-}
-
 function renderItems(items) {
   const fragment = document.createDocumentFragment();
 
@@ -566,12 +522,18 @@ function createProductCard(item) {
   card.className = "product-card";
 
   if (item.image) {
+    const media = document.createElement("div");
+    media.className = "product-media";
     const image = document.createElement("img");
     image.className = "product-image";
     image.src = item.image;
     image.alt = item.image_alt || `${item.name || "商品"}のイメージ`;
     image.loading = "lazy";
-    card.appendChild(image);
+    image.decoding = "async";
+    image.style.objectFit = item.image_fit || "cover";
+    image.style.objectPosition = item.image_position || "center";
+    media.appendChild(image);
+    card.appendChild(media);
   }
 
   const header = document.createElement("div");
@@ -593,9 +555,9 @@ function createProductCard(item) {
   card.appendChild(header);
 
   const allergenSummary = collectAllergenSummary(item);
-  card.appendChild(createTagSection("含まれるアレルゲン", allergenSummary.contains, "contains", "含む"));
+  card.appendChild(createTagSection("含まれるアレルゲン", allergenSummary.contains, "contains"));
   if (allergenSummary.unknown.length > 0) {
-    card.appendChild(createTagSection("確認が必要", allergenSummary.unknown, "unknown", "要確認"));
+    card.appendChild(createTagSection("確認が必要", allergenSummary.unknown, "unknown"));
   }
 
   if (allergenSummary.none.length > 0) {
@@ -603,7 +565,7 @@ function createProductCard(item) {
     details.className = "detail-toggle";
     const summary = document.createElement("summary");
     summary.textContent = "含まれない想定の項目を見る";
-    details.append(summary, createTagSection("含まれない想定", allergenSummary.none, "none", "なし"));
+    details.append(summary, createTagSection("含まれない想定", allergenSummary.none, "none"));
     card.appendChild(details);
   }
 
@@ -639,7 +601,7 @@ function collectAllergenSummary(item) {
   return summary;
 }
 
-function createTagSection(titleText, labels, type, prefix) {
+function createTagSection(titleText, labels, type) {
   const section = document.createElement("section");
   section.className = "product-section";
 
@@ -661,15 +623,7 @@ function createTagSection(titleText, labels, type, prefix) {
   labels.forEach((labelText) => {
     const tag = document.createElement("span");
     tag.className = `tag ${type}`;
-
-    const prefixText = document.createElement("span");
-    prefixText.className = "tag-prefix";
-    prefixText.textContent = prefix;
-
-    const valueText = document.createElement("span");
-    valueText.textContent = labelText;
-
-    tag.append(prefixText, valueText);
+    tag.textContent = labelText;
     list.appendChild(tag);
   });
 
