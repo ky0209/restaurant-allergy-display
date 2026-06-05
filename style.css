@@ -171,26 +171,6 @@ main {
   flex-wrap: wrap;
 }
 
-.guide-strip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 16px;
-}
-
-.guide-step {
-  display: inline-flex;
-  align-items: center;
-  min-height: 34px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: #ffffff;
-  border: 1px solid rgba(216, 210, 200, 1);
-  color: var(--color-accent);
-  font-size: 0.88rem;
-  font-weight: 700;
-}
-
 .filter-form {
   display: grid;
   gap: 16px;
@@ -263,6 +243,7 @@ select {
   background: #fff;
   color: var(--color-accent-strong);
   font-weight: 700;
+  white-space: nowrap;
   cursor: pointer;
   box-shadow: var(--shadow-soft);
 }
@@ -540,8 +521,7 @@ select {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .filter-form .field-group:first-child,
-  .filter-form fieldset:last-child {
+  .filter-form > * {
     grid-column: 1 / -1;
   }
 
