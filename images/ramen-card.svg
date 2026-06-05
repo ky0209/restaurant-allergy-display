@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-labelledby="title desc">
+  <title id="title">醤油ラーメンのイメージ</title>
+  <desc id="desc">温かみのある背景にラーメンどんぶりを描いた装飾画像です。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f4dfc1"/>
+      <stop offset="100%" stop-color="#d7a36d"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <circle cx="620" cy="120" r="110" fill="#fff6e8" opacity="0.45"/>
+  <ellipse cx="400" cy="290" rx="220" ry="130" fill="#ffffff"/>
+  <ellipse cx="400" cy="300" rx="180" ry="95" fill="#c97a33"/>
+  <path d="M270 235c38 44 72 50 118 47 47-2 90-17 142-56" fill="none" stroke="#f6d98a" stroke-linecap="round" stroke-width="18"/>
+  <path d="M295 256c48 30 93 33 155 28 37-3 70-12 98-26" fill="none" stroke="#f9ebbb" stroke-linecap="round" stroke-width="12"/>
+  <circle cx="338" cy="300" r="16" fill="#2f6c34"/>
+  <circle cx="462" cy="284" r="18" fill="#2f6c34"/>
+  <circle cx="388" cy="262" r="20" fill="#fff0d8"/>
+</svg>

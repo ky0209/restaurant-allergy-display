@@ -191,6 +191,26 @@ main {
   flex-wrap: wrap;
 }
 
+.guide-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.guide-step {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #fffaf3;
+  border: 1px solid rgba(181, 141, 99, 0.28);
+  color: var(--color-accent-strong);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
 .filter-form {
   display: grid;
   gap: 16px;
@@ -214,6 +234,20 @@ main {
   margin: 0 0 10px;
   color: var(--color-muted);
   font-size: 0.94rem;
+}
+
+.field-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.field-help-inline {
+  color: var(--color-muted);
+  font-size: 0.86rem;
 }
 
 input[type="search"],
@@ -245,9 +279,32 @@ select {
 }
 
 .radio-group,
-.allergen-grid {
+.allergen-grid,
+.category-chip-list {
   display: grid;
   gap: 10px;
+}
+
+.category-chip-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.chip-button {
+  min-height: 48px;
+  padding: 11px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fffefb, #fbf5ec);
+  color: var(--color-accent-strong);
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+}
+
+.chip-button.is-active {
+  border-color: var(--color-accent);
+  background: linear-gradient(180deg, #8d4f2a, #6d3717);
+  color: #fffaf3;
 }
 
 .radio-pill,
@@ -272,6 +329,38 @@ select {
 
 .allergen-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.advanced-filters {
+  border: 1px solid rgba(181, 141, 99, 0.28);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 250, 243, 0.82);
+  padding: 14px;
+}
+
+.advanced-filters > summary {
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--color-accent-strong);
+  list-style: none;
+}
+
+.advanced-filters > summary::-webkit-details-marker {
+  display: none;
+}
+
+.advanced-filters > summary::before {
+  content: "＋ ";
+}
+
+.advanced-filters[open] > summary::before {
+  content: "− ";
+}
+
+.advanced-filter-body {
+  display: grid;
+  gap: 16px;
+  margin-top: 14px;
 }
 
 .result-count {
@@ -345,6 +434,16 @@ select {
   background:
     linear-gradient(180deg, rgba(255,255,255,0.96), rgba(251, 245, 236, 0.95));
   box-shadow: var(--shadow-soft);
+}
+
+.product-image {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  display: block;
+  border-radius: 18px;
+  margin-bottom: 14px;
+  background: var(--color-surface-alt);
 }
 
 .product-card h3 {
@@ -483,6 +582,10 @@ select {
 
   .allergen-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .category-chip-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .product-list {

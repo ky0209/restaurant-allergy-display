@@ -18,10 +18,13 @@ GitHub Pages にそのまま置けるように、`HTML / CSS / JavaScript / CSV`
 ```text
 /
 ├── index.html
+├── config.js
 ├── style.css
 ├── script.js
 ├── data/
 │   └── allergy.csv
+├── images/
+│   └── ...
 ├── sample/
 │   └── allergy_sample.csv
 └── README.md
@@ -51,6 +54,8 @@ https://<githubユーザー名>.github.io/<repository-name>/
 
 店で新しく CSV を作るときは、`sample/allergy_sample.csv` をコピーして使うと分かりやすいです。
 
+店名、説明文、注意書きを変えたい場合は、`config.js` を編集してください。
+
 ## CSV の書き方
 
 ファイル名:
@@ -69,7 +74,7 @@ UTF-8
 基本のカラムは次のとおりです。
 
 ```csv
-id,category,name,egg,milk,wheat,buckwheat,peanut,shrimp,crab,walnut,cashew,almond,abalone,squid,salmon_roe,orange,beef,kiwi,sesame,salmon,mackerel,soybean,chicken,banana,pork,matsutake,peach,yam,apple,gelatin,macadamia,pistachio,note,updated_at
+id,category,name,egg,milk,wheat,buckwheat,peanut,shrimp,crab,walnut,cashew,almond,abalone,squid,salmon_roe,orange,beef,kiwi,sesame,salmon,mackerel,soybean,chicken,banana,pork,matsutake,peach,yam,apple,gelatin,macadamia,pistachio,image,image_alt,note,updated_at
 ```
 
 ## アレルゲン列で使える値
@@ -90,6 +95,31 @@ id,category,name,egg,milk,wheat,buckwheat,peanut,shrimp,crab,walnut,cashew,almon
 
 空欄にすると、画面上では `要確認` として表示されます。  
 安全のため、空欄を `なし` とは扱いません。
+
+## 画像を表示したい場合
+
+`image` 列に画像パスを入れると、商品カードの上に画像を表示できます。
+
+例:
+
+```text
+./images/ramen-card.svg
+```
+
+`image_alt` 列には、読み上げ用の説明文を入れられます。  
+画像が不要な商品は、`image` と `image_alt` を空欄にして大丈夫です。
+
+画像ファイルは `images/` フォルダに置くと管理しやすいです。
+
+## config.js で変えられること
+
+- 店名
+- 英語表記
+- ページタイトル
+- 説明文
+- 上部メモ
+- 注意書き
+- CSV の読み込み先
 
 ## 更新時のポイント
 

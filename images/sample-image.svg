@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+  <rect width="800" height="500" fill="#f7efe3"/>
+  <rect x="110" y="100" width="580" height="300" rx="32" fill="#fffaf2" stroke="#d5b48f" stroke-width="8"/>
+  <text x="400" y="220" text-anchor="middle" font-size="44" fill="#7a4d2a" font-family="sans-serif">商品画像をここに表示</text>
+  <text x="400" y="285" text-anchor="middle" font-size="28" fill="#9c7754" font-family="sans-serif">CSV の image 列に画像パスを入れるだけ</text>
+</svg>

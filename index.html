@@ -3,36 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>みなと食堂 アレルギー表示</title>
+  <title>テスト食堂 アレルギー表示</title>
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <div class="page-shell">
     <header class="page-header">
       <div class="hero-topline">
-        <p class="eyebrow">Minato Shokudo</p>
+        <p id="store-eyebrow" class="eyebrow">Test Shokudo</p>
         <span class="hero-badge">スマホで確認</span>
       </div>
-      <h1>みなと食堂 アレルギー表示</h1>
-      <p class="page-description">商品ごとのアレルゲン情報を、店頭で見やすく確認できるページです。</p>
+      <h1 id="page-title">テスト食堂 アレルギー表示</h1>
+      <p id="page-description" class="page-description">商品ごとのアレルゲン情報を、店頭で見やすく確認できるページです。</p>
       <div class="hero-meta">
         <p id="last-updated" class="last-updated">最終更新日：-</p>
-        <p class="hero-note">迷ったときはスタッフへお声がけください</p>
+        <p id="hero-note" class="hero-note">迷ったときはスタッフへお声がけください</p>
       </div>
     </header>
 
     <main>
       <section class="notice-card" aria-labelledby="notice-title">
         <h2 id="notice-title">ご確認ください</h2>
-        <p>このページは、お客様が商品選択時にアレルゲン情報を確認するためのものです。</p>
-        <p>調理環境では、他の商品と共通の器具・設備を使用している場合があります。</p>
-        <p>重度のアレルギーをお持ちのお客様は、必ずスタッフまでお申し出ください。</p>
+        <div id="notice-list">
+          <p>このページは、お客様が商品選択時にアレルゲン情報を確認するためのものです。</p>
+          <p>調理環境では、他の商品と共通の器具・設備を使用している場合があります。</p>
+          <p>重度のアレルギーをお持ちのお客様は、必ずスタッフまでお申し出ください。</p>
+        </div>
       </section>
 
       <section class="filter-card" aria-labelledby="filter-title">
         <div class="section-heading">
           <h2 id="filter-title">検索・絞り込み</h2>
           <button id="reset-button" type="button" class="secondary-button">条件をリセット</button>
+        </div>
+
+        <div class="guide-strip" aria-label="使い方ガイド">
+          <span class="guide-step">1. 商品名で探す</span>
+          <span class="guide-step">2. カテゴリをタップ</span>
+          <span class="guide-step">3. 必要なら詳細条件</span>
         </div>
 
         <form id="filter-form" class="filter-form" novalidate>
@@ -43,16 +51,17 @@
               name="search"
               type="search"
               inputmode="search"
-              placeholder="商品名・カテゴリ・備考で検索"
+              placeholder="商品名・カテゴリ・アレルゲン名で検索"
               autocomplete="off"
             >
           </div>
 
           <div class="field-group">
-            <label for="category-select">カテゴリ</label>
-            <select id="category-select" name="category">
-              <option value="all">すべて</option>
-            </select>
+            <div class="field-label-row">
+              <label>カテゴリ</label>
+              <span class="field-help-inline">よく使う条件をタップできます</span>
+            </div>
+            <div id="category-chips" class="category-chip-list" aria-live="polite"></div>
           </div>
 
           <div class="field-group">
@@ -64,25 +73,30 @@
             </select>
           </div>
 
-          <fieldset class="field-group">
-            <legend>アレルゲン絞り込みモード</legend>
-            <div class="radio-group">
-              <label class="radio-pill" for="mode-contains">
-                <input id="mode-contains" type="radio" name="allergen-mode" value="contains" checked>
-                <span>含む商品を表示</span>
-              </label>
-              <label class="radio-pill" for="mode-excludes">
-                <input id="mode-excludes" type="radio" name="allergen-mode" value="excludes">
-                <span>含まない商品を表示</span>
-              </label>
-            </div>
-          </fieldset>
+          <details class="advanced-filters">
+            <summary>詳細条件を開く</summary>
+            <div class="advanced-filter-body">
+              <fieldset class="field-group">
+                <legend>アレルゲン絞り込みモード</legend>
+                <div class="radio-group">
+                  <label class="radio-pill" for="mode-contains">
+                    <input id="mode-contains" type="radio" name="allergen-mode" value="contains" checked>
+                    <span>含む商品を表示</span>
+                  </label>
+                  <label class="radio-pill" for="mode-excludes">
+                    <input id="mode-excludes" type="radio" name="allergen-mode" value="excludes">
+                    <span>含まない商品を表示</span>
+                  </label>
+                </div>
+              </fieldset>
 
-          <fieldset class="field-group">
-            <legend>アレルゲンを選択</legend>
-            <p class="field-help">複数選択時は AND 条件です。</p>
-            <div id="allergen-filters" class="allergen-grid" aria-live="polite"></div>
-          </fieldset>
+              <fieldset class="field-group">
+                <legend>アレルゲンを選択</legend>
+                <p class="field-help">複数選択時は AND 条件です。</p>
+                <div id="allergen-filters" class="allergen-grid" aria-live="polite"></div>
+              </fieldset>
+            </div>
+          </details>
         </form>
       </section>
 
@@ -102,6 +116,7 @@
     </footer>
   </div>
 
+  <script src="./config.js"></script>
   <script src="./script.js"></script>
 </body>
 </html>

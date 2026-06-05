@@ -1,4 +1,5 @@
-const DATA_SOURCE = "./data/allergy.csv";
+const config = window.APP_CONFIG || {};
+const DATA_SOURCE = config.dataSource || "./data/allergy.csv";
 
 const ALLERGEN_LABELS = {
   egg: "卵",
@@ -49,9 +50,14 @@ const state = {
 };
 
 const elements = {
+  storeEyebrow: document.getElementById("store-eyebrow"),
+  pageTitle: document.getElementById("page-title"),
+  pageDescription: document.getElementById("page-description"),
+  heroNote: document.getElementById("hero-note"),
+  noticeList: document.getElementById("notice-list"),
   lastUpdated: document.getElementById("last-updated"),
   searchInput: document.getElementById("search-input"),
-  categorySelect: document.getElementById("category-select"),
+  categoryChips: document.getElementById("category-chips"),
   sortSelect: document.getElementById("sort-select"),
   allergenFilters: document.getElementById("allergen-filters"),
   resultCount: document.getElementById("result-count"),
@@ -64,19 +70,44 @@ const elements = {
 document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
+  applyConfig();
   renderAllergenFilters();
   bindEvents();
   await loadCsv();
 }
 
+function applyConfig() {
+  const storeName = config.storeName || "テスト食堂";
+  const pageTitle = config.pageTitle || `${storeName} アレルギー表示`;
+
+  document.title = pageTitle;
+  elements.storeEyebrow.textContent = config.storeNameEn || storeName;
+  elements.pageTitle.textContent = pageTitle;
+  elements.pageDescription.textContent =
+    config.pageDescription || "商品ごとのアレルゲン情報を、店頭で見やすく確認できるページです。";
+  elements.heroNote.textContent =
+    config.heroNote || "迷ったときはスタッフへお声がけください";
+
+  const notices = Array.isArray(config.noticeLines) && config.noticeLines.length > 0
+    ? config.noticeLines
+    : [
+        "このページは、お客様が商品選択時にアレルゲン情報を確認するためのものです。",
+        "調理環境では、他の商品と共通の器具・設備を使用している場合があります。",
+        "重度のアレルギーをお持ちのお客様は、必ずスタッフまでお申し出ください。"
+      ];
+
+  const fragment = document.createDocumentFragment();
+  notices.forEach((line) => {
+    const paragraph = document.createElement("p");
+    paragraph.textContent = line;
+    fragment.appendChild(paragraph);
+  });
+  elements.noticeList.replaceChildren(fragment);
+}
+
 function bindEvents() {
   elements.searchInput.addEventListener("input", (event) => {
     state.keyword = event.target.value;
-    render();
-  });
-
-  elements.categorySelect.addEventListener("change", (event) => {
-    state.category = event.target.value;
     render();
   });
 
@@ -131,7 +162,7 @@ async function loadCsv() {
     state.items = validation.items;
     state.warnings = validation.warnings;
 
-    populateCategoryOptions(state.items);
+    renderCategoryChips(state.items);
     updateLastUpdated(state.items);
     render();
   } catch (error) {
@@ -270,26 +301,38 @@ function validateItems(headers, items) {
   return { items, warnings };
 }
 
+function getCategories(items) {
+  return Array.from(
+    new Set(items.map((item) => item.category).filter(Boolean))
+  ).sort((first, second) => first.localeCompare(second, "ja"));
+}
+
+function renderCategoryChips(items) {
+  const categories = getCategories(items);
+  const fragment = document.createDocumentFragment();
+
+  [{ value: "all", label: "すべて" }, ...categories.map((category) => ({ value: category, label: category }))].forEach((entry) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `chip-button${state.category === entry.value ? " is-active" : ""}`;
+    button.textContent = entry.label;
+    button.setAttribute("aria-pressed", String(state.category === entry.value));
+    button.addEventListener("click", () => {
+      state.category = entry.value;
+      renderCategoryChips(state.items);
+      render();
+    });
+    fragment.appendChild(button);
+  });
+
+  elements.categoryChips.replaceChildren(fragment);
+}
+
 function populateCategoryOptions(items) {
   const categories = Array.from(
     new Set(items.map((item) => item.category).filter(Boolean))
   ).sort((first, second) => first.localeCompare(second, "ja"));
-
-  elements.categorySelect.innerHTML = "";
-
-  const defaultOption = document.createElement("option");
-  defaultOption.value = "all";
-  defaultOption.textContent = "すべて";
-  elements.categorySelect.appendChild(defaultOption);
-
-  categories.forEach((category) => {
-    const option = document.createElement("option");
-    option.value = category;
-    option.textContent = category;
-    elements.categorySelect.appendChild(option);
-  });
-
-  elements.categorySelect.value = state.category;
+  return categories;
 }
 
 function renderAllergenFilters() {
@@ -334,10 +377,10 @@ function resetFilters() {
   state.sort = "default";
 
   elements.searchInput.value = "";
-  elements.categorySelect.value = "all";
   elements.sortSelect.value = "default";
   document.getElementById("mode-contains").checked = true;
   document.getElementById("mode-excludes").checked = false;
+  renderCategoryChips(state.items);
   renderAllergenFilters();
   render();
 }
@@ -521,6 +564,15 @@ function renderItems(items) {
 function createProductCard(item) {
   const card = document.createElement("article");
   card.className = "product-card";
+
+  if (item.image) {
+    const image = document.createElement("img");
+    image.className = "product-image";
+    image.src = item.image;
+    image.alt = item.image_alt || `${item.name || "商品"}のイメージ`;
+    image.loading = "lazy";
+    card.appendChild(image);
+  }
 
   const header = document.createElement("div");
   header.className = "product-header";

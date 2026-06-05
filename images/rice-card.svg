@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-labelledby="title desc">
+  <title id="title">炙り豚丼のイメージ</title>
+  <desc id="desc">ご飯の上に肉が乗った丼を簡略化して描いた装飾画像です。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#efe4d5"/>
+      <stop offset="100%" stop-color="#be7e54"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <ellipse cx="400" cy="305" rx="215" ry="132" fill="#fff9f2"/>
+  <ellipse cx="400" cy="312" rx="175" ry="95" fill="#f6f1e6"/>
+  <path d="M250 255c55-50 250-63 301 0-43 35-88 58-147 62-61 4-104-12-154-62Z" fill="#8c4b2e"/>
+  <path d="M280 240c38-24 78-36 120-36 52 0 104 16 140 45" fill="none" stroke="#d38f67" stroke-linecap="round" stroke-width="16"/>
+  <circle cx="340" cy="280" r="10" fill="#477a35"/>
+  <circle cx="450" cy="270" r="10" fill="#477a35"/>
+</svg>
